@@ -438,7 +438,57 @@ Day 3 Data Modelling for backend with Mongoose
 	~ // model export
 	  export const SubTodo = mongoose.model("SubTodo", subTodoSchema); 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Creating ecommerce & Hospital management models
 
+~ Regarding image - never store it directly in DB's as it will make it heavier - and buffer needs to do.
+~ Store images, pdfs, docs, etc anything like this on a different place like: AWS S3 Bucket | cloudnarie - and get a link from there, then use that link in 
+  backend.
+~ Now in case of order schema - there is one scenario when user has to order multiple items - so how to get the counts of qty order by user -
+	~ One way is:
+	  ~ mini schema:
+		const orderItemSchema = new mongoose.Schema({
+  		  productID: {
+    		    type: mongoose.Schema.Types.ObjectId,
+    		    ref: "Product",
+  		  },
+  		  quantity: {
+    		    type: Number,
+    		    required: true,
+  		  },
+		});
+	  ~ then use this mini schema in our main order schema:
+	    ~ const orderSchema = new mongoose.Schema(
+  		{
+    		  orderPrice: {
+      		    type: Number,
+      		    required: true,
+    		  },
+    		  customer: {
+      		    type: mongoose.Schema.Types.ObjectId,
+      		    ref: "User",
+    		  },
+    		  // qty of items ordered by user
+    		  OrderItems: {
+      		    type: [orderItemSchema],
+      		    required: true,
+		  },
+		});
+	
+	~ 2nd way is:
+	  ~ type: [
+     		{
+          	  productID: {
+            	    type: mongoose.Schema.Types.ObjectId,
+            	    ref: "Product",
+          	  },
+          	  quantity: {
+            	    type: Number,
+            	    required: true,
+          	  },
+        	},
+        	{},
+      	    ],
 
 
 
