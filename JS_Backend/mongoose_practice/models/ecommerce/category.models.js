@@ -6,7 +6,7 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // optional - but not required as sunch in this case
+    // optional - but not required as such in this case
     // createdBy: {
     //   type: mongoose.Schema.Types.ObjectId,
     //   ref: "User",
