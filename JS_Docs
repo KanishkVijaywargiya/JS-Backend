@@ -1,0 +1,466 @@
+JS Backend Course
+
+~ A Javascript based backend
+we will deals with ~Data, ~File, ~Third parts (API's)
+
+~ JS Runtime - Node JS / Deno / Bun
+
+Backend Roadmap :-
+=> 2 major compents needed:
+	~ a programming language (Java, Python, JS, PHP, Golang, C++) => with one framework
+	~ a database like (Mongo, My SQL, Postgres, Sqlite) => ORM, ODM
+
+Folder Structure :-
+
+~ package.json
+~ .env
+~ Src
+	index.js -> DB Connection
+	app.js -> config, cookie, url encode
+	constants.js -> enums, DB-name
+~ DB -> actual code which helps to connect with DB
+~ Models -> data structure - schema - data ka model - for eg.: users data like user age, name, mobile, etc
+~ Controllers -> functionalities - methods - which takes data & process them
+~ Routes -> /login - /signup - routing of page
+~ Middlewares
+~ Utils -> utilities - eg: mail helper functions - mail bhejne - forgot pwd / reset pwd / congrats on new signup user mai bhi mail bhejna
+~ More (depends)
+
+
+-----------------------------------------------------
+How to deploy backend code in production :-
+
+Steps:
+	~ install node js
+	~ express is used to handle the responses - the response which app made to server & server responds back to the app
+	~ categorization of requests - GET, POST, PUT, PATCH
+	~ go to JS_Backend folder -> deploy folder
+	~ run npm init
+	~ package.json file will get created
+	~ now create an index.js file - with a console log 
+	~ how to run index.js -> node index.js cmd using terminl (u need to be in a correct directory)
+	~ now ho to run index.js using package.json -> needs to write a script for that
+	~ common script cmds are - dev, build, start
+	~ so "start": "node index.js" -> now when we run `npm run start` command then in actual node index.js will trigger
+	~ now need to install express - npm install express
+	~ initial basic code for server
+		// console.log("Chai aur Code");
+
+		const express = require("express");
+		const app = express();
+		const port = 3000;
+
+		app.get("/", (req, res) => {
+  			res.send("Hello World!");
+		});
+
+		app.get("/twitter", (req, res) => {
+  			res.send("kanishkvijay");
+		});
+	
+		app.listen(port, () => {
+  			console.log(`Example app listening on port ${port}`);
+		});
+	~ now if we add any new get request or any other functionality, the server needs to be restarted in order to view that on url i.e.
+	  localhost:3000
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	~ In order to redirect through URL
+		app.get("/youtube", (req, res) => {
+  			res.redirect("https://www.youtube.com");
+		}); 
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	~ In order to hide the sensitive infos like DB username & pwd.
+		~ need to install dotenv package - npm i dotenv
+		~ then create a new file - .env
+		~ in this our port number is sensitive & we should avoid showing this
+		  so in .env file - PORT=3000
+		~ now in index.js file
+		  require("dotenv").config();
+		  const port = process.env.PORT; //3000
+		  while listening make this change => 
+			app.listen(port, () => {
+  				console.log(`Example app listening on port ${port}`);
+			}); 
+
+		~ now we need to deploy our server - PROD deployment
+			~ digital ocean
+			~ AWS
+			~ heroku
+			~ railway
+			~ seenode
+			~ render
+			~ cyclic.sh
+		
+	NOTE: GIT SSH Setup for mac	
+	
+	~~~~~~~~~~~~~~~~~ pushing our server to cloud i.e. Digital Ocean
+	~ push the code to github
+	~ now login to digital ocean
+	~ Steps to setup on Digital Ocean
+		~ login
+		~ create - apps - resource is GitHub - enter the repositiory - check for branch & source directory (optional, if any)
+		~ next - click on edit plan - select basic / pro plans as per need
+		~ now go to environment variables - set it in Global - edit - Keys = PORT ; Values = 3000
+		~ in same way set it for JSbackend also
+			~ when we set the environment variables let's say PORT = 3000 in our JSbackend section, 
+			  the PORTS can be overridden as per the availability of ports. But if we add something other than PORTS 
+			  eg: DB_PASS = kanishk then it will not get over ride.
+		~ check info 
+		~ check review
+		~ click on create resource
+
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	~ if needs to send a json data to our api use this way,
+		~ we can get this type of JSON from: api.github.com/users/kanishkvijaywargiya
+		const githubData = {
+  			login: "KanishkVijaywargiya",
+  			id: 43451046,
+  			node_id: "MDQ6VXNlcjQzNDUxMDQ2",
+  			avatar_url: "https://avatars.githubusercontent.com/u/43451046?v=4"
+		}
+		app.get("/github", (req, res) => {
+  			res.json(githubData);
+		});
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	SUMMARY
+Steps:
+	~ have a VSCODE
+	~ download node js
+	~ run npm init
+	~ in package.json add a script i.e. "start": "node index.js" - so we can run - `npm run start` cmd to run the app on a localhost
+	~ install express
+	~ make an index.js file
+	~ initial basic codes for server - home route, twitter, login, youtube, github
+	~ learn about normal send function, redirect function, json function
+	~ install dotenv package - learn about .env file
+	~ now learn about how to push it to github
+	~ learn about .gitignore file - added node_modules & .env - to avoid sending it to github
+	~ then how to connect the github source code with `Digital Ocean` cloud service - so no need to run it as a localhost.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Day 2: Basic Frontend & Backend
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Backend ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ In JS, there are 2 ways of importing 
+	~ common JS: const express = require("express"); // old syntax - all code comes in synchronously
+	~ Module JS: import express from "express"; // new modern syntax - it works like asynchronously
+~ so basically when we are using module js syntax, & after running the server, it is throwing an error like: 
+	import express from "express"; // new modern syntax
+	SyntaxError: Cannot use import statement outside a module
+	~ so solution is: go to package.json -> "type": "module"
+
+~ now making an array of content
+~ // get a list of 5 jokes
+app.get("/jokes", (req, res) => {
+  // array of jokes
+  const jokes = [
+    {
+      id: 1,
+      title: "A Joke",
+      content: "This is a joke",
+    },
+    {
+      id: 2,
+      title: "Another Joke",
+      content: "This is another joke",
+    },
+  ];
+  res.send(jokes);
+});
+
+NOTE: when handling this type of array or API's, recommendation is go to JSON Formatter site: https://jsonformatter.org
+and always see the api in a tree structure
+
+~ now when running the module js - & want to use .env file - steps:
+	~ npm i dotenv
+	~ make an .env file - touch .env
+	~ inside .env file mention - PORT=4000 // any port number
+	~ now mention this code in server.js file:
+		import dotenv from "dotenv";
+		dotenv.config();
+		const port = process.env.PORT || 3000;
+  	~ now run this command - npm run start
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Frontend ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ For creating React app - there are multiple ways: vite | create-react-app | varcel & so on different ways to make a react app.
+~ These are different types of Bundlers which is commonly known as Tool Chain.
+~ Tool chain means when we write inside the react app, app.js | main.js - end of the web understands HTML, CSS & JS - 
+	So these toolchain actually helps to bundle the things.
+
+~ now to install react app - npm create vite@latest .
+~ then - npm i
+~ then - npm run dev
+
+~ now go inside frontend folder -> src -> app.jsx file
+	~ clear everything from app.jsx file, the DIV part only
+	~ function App() {
+ 		 const [jokes, setJokes] = useState([])
+
+  		return (
+    			<>
+      				<h1>Kanishk is learning backend</h1>
+      				<p>JOKES: {jokes.length}</p>
+      				{/* applying map for looping */}
+      				{
+        				jokes.map((joke, index) => {
+          					<div key={joke.id}>
+            						<h3>{joke.title}</h3>
+            						<p>{joke.content}</p>
+          					</div>
+        				})
+      				}
+    			</>
+  		)
+	}
+~ then install axios - npm i axios
+~ API call style using axios:
+	// API call
+  	useEffect(() => {
+    		axios.get('http://localhost:4000/jokes')
+      		.then((response) => {
+        		setJokes(response.data)
+      		})
+      		.catch((error) => {
+        		console.log(error)
+      		})
+   	})
+
+~ after doing & setting up the API call - we get an error of CORS Policy
+~ What is CORS: 
+	~ it provide a safety check - CORS means cross origin - In general terms - 
+	  allowing only origin things i.e. allowing mother father, sister & brother to enter your home.
+	  But thinking to allow other relatives - and also not allowing any stranger to your house.
+  	~ In technical terms - Cross Origin - Suppose the server is running on different website or domain or PORT & 
+	  Frontend application is running on different things. So in this scenario, CORS does not allow to interact. becoz it will results into n no. of 
+	  requests on server, which can cause bill to get generate.
+	~ If URL is ddiferent or PORT no. is also different then also it comes under CORS Policy.
+
+	~ Solution for this: 
+	  ~ ask ur backend person to whitelist this URL - or IP or Domain
+	  ~ way 1: npm i cors - then use this CORS package to solve this issue
+	  ~ way 2: 
+		~ needs to go to server.js - backend folder file - 
+		~ make a standardization for an API URL - by using `/api/jokes` instead of this /jokes only
+			app.get("/api/jokes", (req, res) => {}) 
+		~ needs to go to app.jsx - frontend folder file -
+		~ make a standardization for an API URL - by using `/api/jokes` instead of URL: https://localhost:4000/api/jokes - 
+		  becoz currently it is localhost but when URL changes means kanishkai.com
+			// API call
+  			useEffect(() => {
+    				axios.get('/api/jokes')
+      				...
+   			})
+		~ now to make that URL in a standard way therefore - by using PROXY
+		~ so if our react app is created by create-react app - then we need to go to package.json i.e. manifesto file and add this
+		  "proxy": "https://localhost:8000" 
+		~ but our toolchain used is VITE - so in this case this is the way:
+		  needs to go to vite.config.js file
+			export default defineConfig({
+  				server: {
+    				  proxy: {
+      				    "/api": "https://localhost:4000",
+    				  },
+  				},
+			});
+		~ this proxy not only appends this URL to our API call but also it helps the application to get origin from the same server.
+		  so server will think this vite application is also running on the same server - CORS issue gets resolved.
+	
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	NOTE:
+	~ The best BAD Practice in some companies:
+	  ~ To avoid using 2 servers becoz of CORS Policy issue, so as a good practice people use proxy in frontend and run both backend & frontend on 
+	    2 different servers to serve application & solve CORS issue.
+	  ~ but some people create a build of frontend - close the frontend server as don't require. Then drag that build folder in backend folder and
+	    to solve CORS & avoid CI/CD, avoid 2 servers - the simple code they add : app.use(express.static("dist"));
+	  ~ This solves purpose but, when next time developer make change in frontend code & make a build then they need to delete the old build from 
+	    backend and drag this build to backend folder & then run the server to serve the changes made in the code.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Summary   
+
+Connecting Backend with Frontend :~
+~ to run backend - got to package.json file & add - "start": "node server.js" - here server.js is our file, it can be anything app.js | index.js
+  cmd used to run in terminal - `npm run start`
+~ there are 2 ways of import statements - common JS & module JS.
+	~ common JS: const express = require("express");
+	~ module JS: import express from "express"; - but to use it in backend - need to go to package.json -> "type": "module"
+~ use.env via dotenv lib. to manage the PORT details and other stuffs in application
+~ use JSON Formatter site to view API array format in a tree like structure for a better understanding.
+~ now in frontend - react app can be created by following bundlers / toolchain - VITE | create-react app | varcel
+~ install react app cmd - `npm create vite@latest .` then needs to run - `npm i`
+~ in this react app - package.json "dev": "vite" is already mention - so cmd use to run frontend application on local server - `npm run dev`
+~ then go to app.jsx file - then follow UseState() technique to write code to pull API Data
+~ then install axios for API calling - `npm i axios`
+~ using useEffect & Axios do the API call
+~ now after doing API call ( means backend is connected to frontend) both running on different servers / localhost & ports. - 
+  so we need to fix CORS Policy error - steps are like:
+	~ in frontend folder - go to vite.config.js - and add this code under 
+		export default defineConfig({
+			server: {
+    			  proxy: {
+      			    "/api": "http://localhost:4000",
+    			  },
+  			},
+		})
+~ and now after fixing the CORS issue - avoid using a big/complete URL in api call therefore - "http://localhost:4000/api/jokes" - 
+  instead use this - "/api/jokes" - as the proxy which we have mention that will going to get append to our URL - and also fix the CORS issue.
+~ avoid bad practice of building the build in frontend and move that folder under backend and setting a static to read that build in backend with help of
+  this code - `app.use(express.static("dist"));`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Day 3 Data Modelling for backend with Mongoose
+	
+~ the most trending & famous tool these days for data modelling is - moon modeler - `https://www.datensen.com/data-modeling/moon-modeler-for-databases.html`
+~ this tool helps to easily deaw diagrams for Mongo DB & Mongoose
+~ Moon Modeler is a data modeling tool for MongoDB and noSQL for visualization of MongoDB & Mongoose ODM schema designs.
+~ alternate tool: `eraser.io`
+~ Mongoose help us in data / object modelling
+~ Instant DEV Environments which we can use instead of downloading everything in local machines: 
+	~ `https://stackblitz.com`  
+	~ `https://github.com/features/codespaces`
+	~ `https://codesandbox.io/new?utm_source=landingpage`
+
+~ Practice Session for data models :
+~ make a folder called models- todo - then files like: user.models.js, todo.models.js, sub_todo.models.js
+~ Model 1:
+	~ go to sub_todo.models.js file
+	~ import mongoose from "mongoose";
+	  const userSchema = new mongoose.Schema({});
+	  export const User = mongoose.model("User", userSchema); //wat model I need to make & on wat basis
+ 	~ when we connect to mongo DB, then the model which is like this "User" - it will convert into lower case plural - `users`
+
+	~ 1st way of creating model - file use: sub_todo.models.js
+		const userSchema = new mongoose.Schema({
+		  username: String,
+  		  email: String,
+  		  isActive: Boolean,
+		})
+	~ 2nd way of creating model
+		const userSchema = new mongoose.Schema(
+		  {
+			username: {
+      			  type: String,
+      			  required: true,
+      			  unique: true,
+      			  lowercase: true,
+    			},
+    			email: {
+      			  type: String,
+      			  required: true,
+      			  unique: true,
+      			  lowercase: true,
+    			},
+    			password: {
+      			  type: String,
+      			  required: [true, "Password is required"],
+      			  min: [6, `Must be at least 6 digit, got ${VALUE}`],
+      			  max: 12,
+    			},
+		  },
+		  { timestamps: true }
+		)
+
+~ Here when user data gets stored, I need to check when that user came & its data stored. So here comes the concept of timestamps - createdAt: & updatedAt:
+
+~ so complete User model looks like this:
+	~ import mongoose from "mongoose";
+	~ const userSchema = new mongoose.Schema(
+  	    {
+		2nd way or
+		1st way of defining
+	    },
+	    {timestamps: true}
+	  )
+	~ export const User = mongoose.model("User", userSchema);
+
+~ relationship or referencing concept of connecting one model with another - in this case, connecting todo model with user model
+	~ createdBy: {
+      		type: mongoose.Schema.Types.ObjectId,
+      		ref: "User",
+    	  },
+~ another eg. is connecting todo model with subtodo
+	~ subTodos: [
+      		{
+        	  type: mongoose.Schema.Types.ObjectId,
+        	  ref: "SubTodo",
+      		},
+    	  ],
+
+~ Now Todo Schema: 
+	~ import mongoose from "mongoose";
+	~ const todoSchema = new mongoose.Schema(
+  	  	{
+    	  		content: {
+      		  		type: String,
+      		  		required: true,
+    			},
+    			complete: {
+      		  		type: Boolean,
+      		  		default: false,
+    			},
+			// now here comes the concept of refrencing or a relationship b/w different models.
+			createdBy: {
+      		  		type: mongoose.Schema.Types.ObjectId,
+      		  		ref: "User",
+    			},
+			subTodos: [
+      		  	  {
+        			type: mongoose.Schema.Types.ObjectId,
+        			ref: "SubTodo",
+      		  	  },
+    			], // Array of sub todos
+	  	},
+	  	{timestamps: true}
+	  )
+	~ // model export
+	  export const Todo = mongoose.model("Todo", todoSchema);
+
+~ Now Sub_Todo Schema:
+	~ import mongoose from "mongoose";
+
+	~ // schema
+	  const subTodoSchema = new mongoose.Schema(
+  	  	{
+    			content: {
+      			  type: String,
+      			  required: true,
+    			},
+    			complete: {
+      			  type: Boolean,
+      			  default: false,
+    			},
+    			createdBy: {
+      			  type: mongoose.Schema.Types.ObjectId,
+      			  ref: "User",
+    			},
+  		},
+  		{ timestamps: true }
+	  );
+
+	~ // model export
+	  export const SubTodo = mongoose.model("SubTodo", subTodoSchema); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
