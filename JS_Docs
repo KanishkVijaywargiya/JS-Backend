@@ -291,7 +291,7 @@ Connecting Backend with Frontend :~
 ~ then install axios for API calling - `npm i axios`
 ~ using useEffect & Axios do the API call
 ~ now after doing API call ( means backend is connected to frontend) both running on different servers / localhost & ports. - 
-  so we need to fix CORS Policy error - steps are like:
+  so we need to fix CORS [Cros Orgin Resource Sharing] Policy error - steps are like:
 	~ in frontend folder - go to vite.config.js - and add this code under 
 		export default defineConfig({
 			server: {
@@ -489,6 +489,174 @@ Day 3 Data Modelling for backend with Mongoose
         	},
         	{},
       	    ],
+
+
+~ git ignore generator - https://mrkandreev.name/snippets/gitignore-generator/#Node
+  ~ helps to generate all git ignore files.
+
+~ there are 2 ways of installing dependencies - npm i --save-dev nodemon or npm i -D nodemon - for development when we don't want it to go in PROD
+  ~ prod mode will be - npm i nodemon
+~ and now needs to run our proj using nodemon - go to package.json - add "dev": "nodemon src/index.js
+~ & the way to run this `"dev": "nodemon src/index.js - npm run dev`
+~ npm i dotenv
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DB Connection ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~ DB: Mongo DB
+~ DB: 
+	User 1:
+	username: kanishkvijaywargiya99
+      	password: ProjmacOne001
+
+	User 2:
+	username: iOS-dev_manas_frontend
+	password: iOSDevManas
+~ connecting mongoDB: 
+  npm i mongodb
+  URI: mongodb+srv://<username>:<password>@proj-01.mc1mg.mongodb.net/
+
+~ NOTE: while talking / connecting to DB - always use try-catch or promises in order to avoid errors - always use async-await as communicating with DB's 
+  it takes some time. As DB can be in another continent or far away from the user location !
+
+
+~ 1st approach to connect to Mongo DB:
+  ~ .env file - PORT=4000; MONGODB_URI=mongodb+srv://kanishkvijaywargiya99:ProjmacOne001@proj-01.mc1mg.mongodb.net
+  ~ constants.js - export const DB_NAME = "youtubeproject"; // name of your DB, can be any name
+  ~ Index.js file	
+	import mongoose from "mongoose";
+	import dotenv from "dotenv";
+	import { DB_NAME } from "constants";
+	import express from "express";
+
+	dotenv.config();
+	const app = express();
+	const port = process.env.PORT || 3000;
+	const mongoDBURI = process.env.MONGODB_URI;
+
+	// db connect code
+	(async () => {
+	  try {
+	    await mongoose.connect(`${mongoDBURI}/${DB_NAME}`);
+	    app.on("error", (error) => {
+	      console.log("Error", error);
+	      throw error;
+	    });
+
+	    app.listen(port, () => {
+	      console.log(`Server at PORT: ${port}`);
+	    });
+	  } catch (error) {
+	      console.log(`Error: ${error}`);
+	    throw err;
+	  }
+	})();
+
+~ 2nd approach:
+  ~ go to /db/index.js folder/file
+	~ 
+	import mongoose from "mongoose";
+	import { DB_NAME } from "../constants.js";
+
+	const mongoDBURI = process.env.MONGODB_URI;
+
+	const connectDB = async () => {
+	  try {
+	    const connectionInstance = await mongoose.connect(
+	      `${mongoDBURI}/${DB_NAME}`
+	    );
+	    console.log(
+	      `\n Mongo DB Connected !! DB HOST: ${connectionInstance.connection.host}`
+	    );
+	  } catch (error) {
+	      console.log("MongoDB connection: ", error);
+	      process.exit(1);
+	  }
+	};
+
+	export default connectDB;
+  ~ now go to root index.js file
+ 	~ 
+	import dotenv from "dotenv";
+	import connectDB from "./db/index.js";
+
+	dotenv.config({ path: "./env" });
+
+	connectDB();
+~ always remember - app.use() is used in case of middleware always.
+
+~ to do setup for CORS:
+	~ in .env file - CORS_ORIGIN=http://localhost or * asteric means allowing all the URLs (not a good practice)
+	~ in /src/app.js file -
+		app.use(
+		  cors({
+		    origin: corsOrigin,
+		  })
+		);
+~ express major config codes: - app.js file
+	// configurations
+	// limiting the use of JSON - for server easiness
+	  app.use(express.json({ limit: `${configLimit}` }));
+	  app.use(express.urlencoded({ extended: true, limit: `${configLimit}` }));
+	// handling assets, favicons using express config
+	  app.use(express.static("public"));	 
+
+~ use of cookie-parser : from my server, trying to access and set the cookies of the users browser - to perform CRUD functionalities on cookies - app.js file
+
+~ logic of usage of `middleware` - it has been used b/w URL hit & response send
+	~ user come to URL: /instagram -> middleware -> res.json() or res.send('Kansihk')
+	~ middleware - it will help to check if user is logged in or not before using the compute power. Checks of in b/w.
+	~ then another middleware - check if user is admin or not
+	~ we can apply multiple middleware also - not necessary it is restricted to one.
+	~ sequence is mandat for middlewares
+~ in our call backs - we know req, res only but in reality there are 4 - (err, req, res, next) - next is a flag used in middleware concept.
+	~ so once middleware do the process of checking if user is logged in or not - next - 2nd middleware will check if user is admin or not - next - discard
+
+
+~ Utility - Wrappers 
+	~ Now in case of repating codes - let's say we will be communicating with DB frequently for almost every thing like handling img, pdfs, data etc.
+	~ so better / good practice is to make a wrapper of that code which will go under utils folder.
+	~ file name - utils / asyncHandler.js
+
+~ NOTE: Default export can only be one in a whole page - export default abc - import abc from 'abc'
+	~ normal exports can be multipls - export {abc} or export const abc = () => {} - import {abc} from 'abc'
+~ NOTE: higher order function - functions which accepts functions as a parameter & return also
+~ const asyncHandler = () => {};
+  const asyncHandler = (func) => () => {};
+  const asyncHandler = (func) => async () => { };
+
+	~ wrapper function 1st way:-
+	// wrapper function
+	const asyncHandler = (func) => async (req, res, next) => {
+	  try {
+	    await func(req, res, next);
+	  } catch (error) {
+	    res.status(err.code || 500).json({
+	      success: false,
+	      message: err.message,
+	    });
+	  }
+	};
+	~ 2nd way:-
+	const asyncHandler = (requestHandler) => {
+	  (req, res, next) => {
+	    Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
+	  };
+	};
+
+	
+~ to check the error go to - https://nodejs.org/api/errors.html
+  Node JS gives a class of errors
+
+~ standard status code: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
+	Informational responses (100 – 199)
+	Successful responses (200 – 299)
+	Redirection messages (300 – 399)
+	Client error responses (400 – 499)
+	Server error responses (500 – 599)
+
+
+
+
+
 
 
 
