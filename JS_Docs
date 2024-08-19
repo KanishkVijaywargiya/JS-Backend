@@ -653,7 +653,18 @@ Day 3 Data Modelling for backend with Mongoose
 	Client error responses (400 – 499)
 	Server error responses (500 – 599)
 
+~ now we are in face of creating user & video model
+~ for video model - we need a package called: mongooseAggregatePaginate
+~ for user model - we have password field, which we need to encrypt - so we need bcrypt & JSON Web Token (JWT) package - 
+~ to know more on JWT - go to - jwt.io
+~ packages required:
+	~ for JWT: jsonwebtoken
+	~ for encryption: bcrypt
 
+~ for uploading images and other files - we use cloudinary
+	~ package needed: multer & cloudinary
+	~ multer use - will take file from user & keep it temp. on our local server.
+	~ then using cloudinary, we will take the file from local server & store it on cloudinary server  	
 
 
 
