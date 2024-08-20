@@ -666,26 +666,143 @@ Day 3 Data Modelling for backend with Mongoose
 	~ multer use - will take file from user & keep it temp. on our local server.
 	~ then using cloudinary, we will take the file from local server & store it on cloudinary server  	
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	HTTP Crash Course
+~ Hyper Text Transfer Protocol
+~ some imp. keywords - URL [Uniform Resource Locator], URI [Uniform Resource Identifier], URN [Uniform Resource Name]
+~ What is HTTP Headers ?
+  ~ When we send some data, there HTTP Headers or metadata comes in.
+  ~ metadata ----> key-value pair (eg.: name: Kanishk) sent along with request & response.
+  ~ where metadata being used: caching, authentication (bearer token, session cookies, session tokens, refresh tokens), 
+    manage state (is user logged in or the current state of user)
+  ~ old naming convention: X-prefix -> 2012 (depricated)
+  ~ Categories of Headers:
+    ~ Request Headers ---> From Client
+    ~ Response Headers ---> From Server
+    ~ Representation Headers ---> encoding / compression
+    ~ Payload Headers ---> data
+
+  ~ Most common Headers:
+    ~ Accept: Application / JSON
+    ~ User: Agent
+    ~ Authorization
+    ~ Content-Type
+    ~ Cookie
+    ~ Cache-Control
+  ~ CORS
+    ~ ACCESS-CONTROL-ALLOW-ORIGIN
+    ~ ACCESS-CONTROL-ALLOW-CREDENTIALS
+    ~ ACCESS-CONTROL-ALLOW-METHOD
+  ~ Security
+    ~ CROSS-ORIGIN-EMBEDDER-POLICY
+    ~ CROSS-ORIGIN-OPENS-POLICY
+    ~ CONTENT-SECURITY-POLICY
+    ~ X-XCS-PROTECTION
+
+~ HTTP Methods:
+  ~ Basic set of operations that can be used to interact with the server
+    ~ GET: retireve a resource
+    ~ HEAD: no message body (only headers)
+    ~ OPTIONS: wat operations are availaible
+    ~ TRACE: loopback test (get same data) 
+    ~ DELETE: remove a resource
+    ~ PUT: replace a resource
+    ~ POST: interact with resource
+    ~ PART: change part of resource
+
+~ HTTP Status Code
+  ~ 1xx Informational
+  ~ 2xx Success
+  ~ 3xx Redirection
+  ~ 4xx CLient Error
+  ~ 5xx Server Error
+    ~ 100 - Continue
+    ~ 102 - Processing
+    ~ 200 - Ok
+    ~ 201 - Created
+    ~ 202 - Accepted
+    ~ 307 - temp. redirect
+    ~ 308 - permanent redirect
+    ~ 400 - Bad request
+    ~ 401 - unauthorized
+    ~ 402 - payment required
+    ~ 404 - not found
+    ~ 500 - Internal Server Error
+    ~ 504 - Gateway timeout
+
+~ Declaring routes & controllers:
+	~ in `CONTROLLERS` folder - make a `user.controllers.js` file
+	  import { asyncHandler } from "../utils/asyncHandler.js";
+
+	  const registerUser = asyncHandler(async (req, res) => {
+	    res.status(200).json({ message: "Ok 🆗" });
+	  });
+
+	  export { registerUser };
+
+	~ now go to `ROUTES` folder - make a `user.routes.js` file
+	import { Router } from "express";
+	import { registerUser } from "../controllers/user.controller.js";
+
+	const userRouter = Router();
+	userRouter.route("/register").post(registerUser);
+	export default userRouter;
+
+	~ Summary:-
+	~ now how to use this - so now go to app.js file - after express config codes - start writing routes codes
+	  ~ // routes
+	  import userRouter from "./routes/user.routes.js";
+
+	  // routes declaration
+	  app.use("/users", userRouter); // demo URL: http://localhost:8000/users/register
+
+	~ `so basically this says - app.use go to /users which is a prefex for our URL - so go to https://localhost:8000/users
+	  then now go to routers and call the register function - https://localhost:8000/users/register
+
+~ Steps for `Registering a User`
+	~ go to controller.js file - 
+	  $$$$$$$$$ Steps to register an user $$$$$$$$$$$$$
+	    1. get user details from front-end
+	    2. validation - check fileds - it should not be empty
+	    3. check if user already exists - check with username, email
+	    4. check for image files - avatar (as it is compulsory), coverImage is not required field
+	    5. upload them to cloudinary, check avatar on cloudinary - flow: user - multer - cloudinary
+	    6. create an user object - create an entry in mongoDB - object creation becoz mongo DB is a noSQL
+	    7. remove password & refresh token field from response 
+	    8. check for user creation 
+	    9. return response
+
+	~ 1. const { username, email, fullname, password } = req.body;
+  	     console.log(`Email: ${email}`);
+	     ~ now need to test it in Postman - http://localhost:4000/api/v1/users/register
+	     ~ then click on Body - raw option - select JSON
+	~ 2. 
+	
+	~ to handle upload of images - avatar & coverImage - we need to inject middleware in userRoute
+	  ~ import { upload } from "../middlewares/multer.middleware.js";
+	    const userRouter = Router();
+
+	    userRouter.route("/register").post(
+	      // this is basically middleware getting injected
+	      upload.fields([
+	        // accepting 2 files - avatar & coverImage
+	        { name: "avatar", maxCount: 1 },
+	        { name: "coverImage", maxCount: 1 },
+	      ]),
+	      registerUser
+	    );
+
+	~ NOTE: when multer, it provides multiple functions like any, array, none, single, fields - so we have multiple fields 
+	  so that's why we have choose fields
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+~ To use postman - URL: http://localhost:4000/api/v1/users/register
+	~ select POST method
+	~ Body - form-data - choosen becoz we need to send files - based on data basically
+	~ 
 
 
 
