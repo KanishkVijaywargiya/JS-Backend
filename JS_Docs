@@ -805,6 +805,37 @@ Day 3 Data Modelling for backend with Mongoose
 	~ 
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Purpose of Refresh token
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example Flow
+~ Login:
+	~ User logs in.
+	~ Server responds with accessToken and refreshToken.
+	~ Frontend stores these tokens.
+~ Making Requests:
+	~ User makes API requests using the accessToken.
+	~ If the request fails due to an expired token, the frontend initiates a token refresh process.
+~ Token Refresh:
+	~ Frontend sends the refreshToken to the /refresh-token route.
+	~ Server validates the refreshToken and responds with new tokens.
+	~ Frontend updates stored tokens and retries the failed request.
+~ Logout:
+	~ When the user logs out, the frontend should clear the tokens from storage and notify the server to invalidate the refresh token.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
